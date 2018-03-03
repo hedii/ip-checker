@@ -44,5 +44,7 @@
                 "Hedii\\IpChecker\\IpCheckerServiceProvider"
             ]
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
