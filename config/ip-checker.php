@@ -12,7 +12,7 @@ return [
      * The urls used to test the ip address.
      */
     'test_urls' => [
-        'https://example.com',
+        'http:/localhost',
     ],
 
     /**

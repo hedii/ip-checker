@@ -4,6 +4,8 @@ namespace Hedii\IpChecker;
 
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use Hedii\IpChecker\Events\IpAddressCheckFailedEvent;
 use Illuminate\Config\Repository;
 use Illuminate\Support\Arr;
@@ -51,9 +53,18 @@ class IpChecker
             $this->client($ip)->get($this->url());
 
             return true;
+        } catch (ClientException $e) {
+            return true;
+        } catch (RequestException $e) {
+            if (isset($e->getHandlerContext()['errno'])
+                && $e->getHandlerContext()['errno'] === 'Failed binding local connection end') {
+                return false;
+            }
         } catch (Exception $e) {
             return false;
         }
+
+        return false;
     }
 
     /**
@@ -98,7 +109,8 @@ class IpChecker
             'connect_timeout' => 10,
             'timeout' => 30,
             'verify' => false,
-            'curl' => [CURLOPT_INTERFACE => $ip]
+            'curl' => [CURLOPT_INTERFACE => $ip],
+            'force_ip_resolve' => 'v4'
         ]);
     }
 }
